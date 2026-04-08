@@ -21,7 +21,6 @@
   --radius:  12px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-html,body { height:100%; }
 body {
   background:var(--bg); color:var(--text);
   font-family:'DM Mono',monospace;
@@ -35,7 +34,6 @@ body::before {
   background-size:32px 32px; pointer-events:none;
 }
 
-/* HEADER */
 header {
   position:relative; z-index:10;
   display:flex; align-items:center; justify-content:space-between;
@@ -50,324 +48,110 @@ header {
   font-size:14px; font-weight:900;
   letter-spacing:3px; color:var(--s1); text-transform:uppercase;
 }
-.logo em { color:var(--text); font-style:normal; font-weight:400; }
-.header-right { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.header-right { display:flex; align-items:center; gap:14px; }
 
-/* BLE */
-.ble-wrap { display:flex; align-items:center; gap:8px; }
-.dot { width:7px; height:7px; border-radius:50%; background:var(--dim); transition:all 0.3s; }
-.dot.on  { background:var(--s3); box-shadow:0 0 8px var(--s3); animation:blink 2s infinite; }
-.dot.mid { background:var(--warn); box-shadow:0 0 8px var(--warn); animation:blink 0.4s infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-.ble-lbl { font-size:11px; color:var(--dim); letter-spacing:1px; }
 #btn-ble {
   background:transparent; border:1px solid var(--s1); color:var(--s1);
   padding:7px 16px; font-family:'Orbitron',monospace; font-size:10px;
-  letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all 0.2s;
+  letter-spacing:2px; text-transform:uppercase; cursor:pointer;
   clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
 }
-#btn-ble:hover { background:var(--s1); color:var(--bg); }
-#btn-ble:disabled { opacity:0.3; cursor:not-allowed; }
 
-/* DEVICE NAME */
-.device-name {
-  font-size:11px; color:var(--dim); letter-spacing:1px;
-  padding:4px 10px; border:1px solid var(--border); border-radius:4px;
-  display:none;
-}
-.device-name.show { display:block; }
-
-/* MAIN */
 main {
   position:relative; z-index:1;
-  display:grid; grid-template-columns:1fr 1fr;
+  display:grid; grid-template-columns: 1fr 1fr;
   gap:16px; padding:16px;
   max-width:980px; margin:0 auto;
 }
 
-/* CARD */
 .sensor-card {
   background:var(--surface); border:1px solid var(--border);
   border-radius:var(--radius); padding:18px;
-  position:relative; overflow:hidden;
   display:flex; flex-direction:column; gap:14px;
 }
 .sensor-card.s1 { --accent:var(--s1); }
 .sensor-card.s2 { --accent:var(--s2); }
 .sensor-card.s3 { --accent:var(--s3); }
 .sensor-card.s4 { --accent:var(--s4); }
-.sensor-card::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:2px;
-  background:linear-gradient(90deg,transparent,var(--accent),transparent);
-}
-.card-header { display:flex; align-items:center; justify-content:space-between; }
-.card-title { font-family:'Orbitron',monospace; font-size:10px; letter-spacing:3px; color:var(--dim); text-transform:uppercase; }
-.alert-badge { font-size:10px; letter-spacing:2px; padding:3px 8px; border-radius:4px; display:none; }
-.alert-badge.show { display:block; animation:blink 0.5s infinite alternate; }
-.alert-badge.pmax { background:rgba(255,56,96,0.2); color:var(--neg); border:1px solid var(--neg); }
-.alert-badge.vmax { background:rgba(255,214,0,0.1); color:var(--warn); border:1px solid var(--warn); }
-.alert-badge.falla { background:rgba(255,56,96,0.15); color:var(--neg); border:1px solid var(--neg); }
 
-/* GAUGE */
-.gauge-wrap { display:flex; flex-direction:column; align-items:center; gap:8px; }
-.gauge-svg { width:100%; max-width:210px; }
-.gauge-nums { display:flex; gap:20px; justify-content:center; }
-.gnum { text-align:center; }
-.gnum .val { font-family:'Orbitron',monospace; font-size:20px; font-weight:700; color:var(--accent); line-height:1; transition:color 0.3s; }
-.gnum .val.neg { color:var(--neg); }
-.gnum .val.falla { color:var(--neg); font-size:13px; }
-.gnum .unit { font-size:10px; color:var(--dim); letter-spacing:2px; margin-top:3px; }
+.card-title { font-family:'Orbitron',monospace; font-size:10px; letter-spacing:3px; color:var(--dim); }
 
-/* CHART */
-.chart-wrap {}
-.chart-title { font-size:9px; letter-spacing:2px; color:var(--dim); text-transform:uppercase; margin-bottom:6px; }
-canvas.chart { width:100%; height:90px; display:block; }
+/* AJUSTE: Gauge y números alineados a la IZQUIERDA */
+.gauge-wrap { display:flex; flex-direction:column; align-items: flex-start; gap:8px; }
+.gauge-svg { width:100%; max-width:180px; margin-left: -10px; } /* Ajuste de margen para compensar el arco */
+.gauge-nums { display:flex; justify-content: flex-start; width: 100%; }
 
-/* DATALOGGER */
-.log-panel {
-  grid-column: 1 / -1;
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--radius); padding:20px;
-  position:relative;
-}
-.log-panel::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:2px;
-  background:linear-gradient(90deg,transparent,var(--dim),transparent);
-}
-.log-header {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:14px; flex-wrap:wrap; gap:10px;
-}
-.log-title { font-family:'Orbitron',monospace; font-size:10px; letter-spacing:3px; color:var(--dim); text-transform:uppercase; }
-.log-controls { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-.log-count { font-size:11px; color:var(--dim); }
-.log-interval { font-size:11px; color:var(--dim); }
-.btn-log {
-  background:transparent; border:1px solid var(--dim); color:var(--dim);
-  padding:6px 14px; font-family:'Orbitron',monospace; font-size:9px;
-  letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all 0.2s;
-  clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
-}
+.gnum .val { font-family:'Orbitron',monospace; font-size:28px; font-weight:700; color:var(--accent); }
+.gnum .unit { font-size:11px; color:var(--dim); letter-spacing:2px; }
+
+.chart-title { font-size:9px; letter-spacing:2px; color:var(--dim); margin-bottom:6px; }
+canvas.chart { width:100%; height:80px; display:block; }
+
+.log-panel { grid-column: 1 / -1; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+.log-header { display:flex; justify-content:space-between; margin-bottom:14px; align-items:center; }
+.btn-log { background:transparent; border:1px solid var(--dim); color:var(--dim); padding:6px 12px; font-size:9px; cursor:pointer; }
 .btn-log.active { border-color:var(--s3); color:var(--s3); }
-.btn-log.active:hover { background:var(--s3); color:var(--bg); }
-.btn-log.export { border-color:var(--s1); color:var(--s1); }
-.btn-log.export:hover { background:var(--s1); color:var(--bg); }
-.btn-log.clear { border-color:var(--neg); color:var(--neg); }
-.btn-log.clear:hover { background:var(--neg); color:var(--bg); }
-.log-table-wrap { max-height:200px; overflow-y:auto; }
-.log-table {
-  width:100%; border-collapse:collapse;
-  font-size:11px; font-family:'DM Mono',monospace;
-}
-.log-table th {
-  text-align:left; padding:5px 10px;
-  color:var(--dim); border-bottom:1px solid var(--border);
-  font-size:10px; letter-spacing:1px; position:sticky; top:0;
-  background:var(--surface);
-}
-.log-table th.s1c { color:var(--s1); }
-.log-table th.s2c { color:var(--s2); }
-.log-table th.s3c { color:var(--s3); }
-.log-table th.s4c { color:var(--s4); }
-.log-table td { padding:4px 10px; color:var(--text); border-bottom:1px solid rgba(26,35,50,0.5); }
-.log-table tr:last-child td { border-bottom:none; }
-.log-empty { text-align:center; color:var(--dim); font-size:11px; padding:24px; }
 
-/* NO BLE */
-#no-ble {
-  position:fixed; inset:0; z-index:100;
-  background:rgba(8,11,16,0.97);
-  display:none; flex-direction:column;
-  align-items:center; justify-content:center; gap:12px;
-}
-#no-ble h2 { font-family:'Orbitron',monospace; color:var(--neg); letter-spacing:3px; }
-#no-ble p { color:var(--dim); font-size:12px; max-width:340px; text-align:center; line-height:1.8; }
+.log-table-wrap { max-height:250px; overflow-y:auto; }
+.log-table { width:100%; border-collapse:collapse; font-size:12px; }
+.log-table th { text-align:left; padding:8px; color:var(--dim); border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--surface); }
+.log-table td { padding:8px; border-bottom:1px solid rgba(26,35,50,0.5); }
 
-/* Scrollbar */
-::-webkit-scrollbar { width:6px; }
-::-webkit-scrollbar-track { background:var(--bg); }
-::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
-
-@media(max-width:640px) {
-  main { grid-template-columns:1fr; }
-  .log-panel { grid-column:1; }
-}
+@media(max-width:640px) { main { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">E<em>-Skids</em> · PRESIÓN DATALOGGER X4</div>
+  <div class="logo">E-SKIDS · PRESIÓN</div>
   <div class="header-right">
-    <span class="device-name" id="device-name"></span>
-    <div class="ble-wrap">
-      <div class="dot" id="dot"></div>
-      <span class="ble-lbl" id="ble-lbl">DESCONECTADO</span>
-    </div>
     <button id="btn-ble">Conectar</button>
   </div>
 </header>
 
 <main>
+  <script>
+    const sensors = [
+      { id: 1, label: 'SENSOR 1', color: 'var(--s1)' },
+      { id: 2, label: 'SENSOR 2', color: 'var(--s2)' },
+      { id: 3, label: 'SENSOR 3', color: 'var(--s3)' },
+      { id: 4, label: 'SENSOR 4', color: 'var(--s4)' }
+    ];
+    
+    sensors.forEach(s => {
+      document.write(`
+        <div class="sensor-card s${s.id}">
+          <div class="card-title">// ${s.label}</div>
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" viewBox="0 0 220 130">
+              <path id="g${s.id}-bg" fill="none" stroke="#1a2332" stroke-width="14" stroke-linecap="round"/>
+              <path id="g${s.id}-pos" fill="none" stroke="${s.color}" stroke-width="14" stroke-linecap="round"/>
+              <line id="g${s.id}-needle" x1="110" y1="110" x2="110" y2="44" stroke="white" stroke-width="2" style="transform-origin:110px 110px; transition:transform 0.4s;"/>
+              <text x="10" y="124" fill="#3d5166" font-size="9">-20</text>
+              <text x="175" y="124" fill="#3d5166" font-size="9">200</text>
+            </svg>
+            <div class="gauge-nums">
+              <div class="gnum">
+                <div class="val" id="s${s.id}-inwc">0.0</div>
+                <div class="unit">inWC</div>
+              </div>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-title">// HISTORIAL</div>
+            <canvas class="chart" id="chart${s.id}"></canvas>
+          </div>
+        </div>
+      `);
+    });
+  </script>
 
-  <!-- SENSOR 1 -->
-  <div class="sensor-card s1">
-    <div class="card-header">
-      <div class="card-title">// Sensor 1</div>
-      <div class="alert-badge" id="alert1"></div>
-    </div>
-    <div class="gauge-wrap">
-      <svg class="gauge-svg" viewBox="0 0 220 130">
-        <path id="g1-bg"  fill="none" stroke="#1a2332" stroke-width="14" stroke-linecap="round"/>
-        <path id="g1-neg" fill="none" stroke="#ff3860" stroke-width="14" stroke-linecap="round"/>
-        <path id="g1-pos" fill="none" stroke="#00d4ff" stroke-width="14" stroke-linecap="round"/>
-        <line id="g1-zero" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-        <line id="g1-needle" x1="110" y1="110" x2="110" y2="44"
-          stroke="white" stroke-width="2" stroke-linecap="round"
-          style="transform-origin:110px 110px;transition:transform 0.4s cubic-bezier(.4,2,.6,1)"/>
-        <circle cx="110" cy="110" r="5" fill="white" opacity="0.7"/>
-        <text x="10"  y="124" fill="#ff3860" font-family="DM Mono,monospace" font-size="9">-20</text>
-        <text x="166" y="124" fill="#00d4ff" font-family="DM Mono,monospace" font-size="9">+200</text>
-        <text x="100" y="124" fill="#3d5166" font-family="DM Mono,monospace" font-size="9">0</text>
-      </svg>
-      <div class="gauge-nums">
-        <div class="gnum">
-          <div class="val" id="s1-inwc">--.-</div>
-          <div class="unit">inWC</div>
-        </div>
-        <div class="gnum">
-          <div class="val" id="s1-mbar" style="color:var(--dim)">--.-</div>
-          <div class="unit">mbar</div>
-        </div>
-      </div>
-    </div>
-    <div class="chart-wrap">
-      <div class="chart-title">// historial</div>
-      <canvas class="chart" id="chart1"></canvas>
-    </div>
-  </div>
-
-  <!-- SENSOR 2 -->
-  <div class="sensor-card s2">
-    <div class="card-header">
-      <div class="card-title">// Sensor 2</div>
-      <div class="alert-badge" id="alert2"></div>
-    </div>
-    <div class="gauge-wrap">
-      <svg class="gauge-svg" viewBox="0 0 220 130">
-        <path id="g2-bg"  fill="none" stroke="#1a2332" stroke-width="14" stroke-linecap="round"/>
-        <path id="g2-neg" fill="none" stroke="#ff3860" stroke-width="14" stroke-linecap="round"/>
-        <path id="g2-pos" fill="none" stroke="#ff6b2b" stroke-width="14" stroke-linecap="round"/>
-        <line id="g2-zero" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-        <line id="g2-needle" x1="110" y1="110" x2="110" y2="44"
-          stroke="white" stroke-width="2" stroke-linecap="round"
-          style="transform-origin:110px 110px;transition:transform 0.4s cubic-bezier(.4,2,.6,1)"/>
-        <circle cx="110" cy="110" r="5" fill="white" opacity="0.7"/>
-        <text x="10"  y="124" fill="#ff3860" font-family="DM Mono,monospace" font-size="9">-20</text>
-        <text x="166" y="124" fill="#ff6b2b" font-family="DM Mono,monospace" font-size="9">+200</text>
-        <text x="100" y="124" fill="#3d5166" font-family="DM Mono,monospace" font-size="9">0</text>
-      </svg>
-      <div class="gauge-nums">
-        <div class="gnum">
-          <div class="val" id="s2-inwc">--.-</div>
-          <div class="unit">inWC</div>
-        </div>
-        <div class="gnum">
-          <div class="val" id="s2-mbar" style="color:var(--dim)">--.-</div>
-          <div class="unit">mbar</div>
-        </div>
-      </div>
-    </div>
-    <div class="chart-wrap">
-      <div class="chart-title">// historial</div>
-      <canvas class="chart" id="chart2"></canvas>
-    </div>
-  </div>
-
-  <!-- SENSOR 3 -->
-  <div class="sensor-card s3">
-    <div class="card-header">
-      <div class="card-title">// Sensor 3</div>
-      <div class="alert-badge" id="alert3"></div>
-    </div>
-    <div class="gauge-wrap">
-      <svg class="gauge-svg" viewBox="0 0 220 130">
-        <path id="g3-bg"  fill="none" stroke="#1a2332" stroke-width="14" stroke-linecap="round"/>
-        <path id="g3-neg" fill="none" stroke="#ff3860" stroke-width="14" stroke-linecap="round"/>
-        <path id="g3-pos" fill="none" stroke="#00e676" stroke-width="14" stroke-linecap="round"/>
-        <line id="g3-zero" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-        <line id="g3-needle" x1="110" y1="110" x2="110" y2="44"
-          stroke="white" stroke-width="2" stroke-linecap="round"
-          style="transform-origin:110px 110px;transition:transform 0.4s cubic-bezier(.4,2,.6,1)"/>
-        <circle cx="110" cy="110" r="5" fill="white" opacity="0.7"/>
-        <text x="10"  y="124" fill="#ff3860" font-family="DM Mono,monospace" font-size="9">-20</text>
-        <text x="166" y="124" fill="#00e676" font-family="DM Mono,monospace" font-size="9">+200</text>
-        <text x="100" y="124" fill="#3d5166" font-family="DM Mono,monospace" font-size="9">0</text>
-      </svg>
-      <div class="gauge-nums">
-        <div class="gnum">
-          <div class="val" id="s3-inwc">--.-</div>
-          <div class="unit">inWC</div>
-        </div>
-        <div class="gnum">
-          <div class="val" id="s3-mbar" style="color:var(--dim)">--.-</div>
-          <div class="unit">mbar</div>
-        </div>
-      </div>
-    </div>
-    <div class="chart-wrap">
-      <div class="chart-title">// historial</div>
-      <canvas class="chart" id="chart3"></canvas>
-    </div>
-  </div>
-
-  <!-- SENSOR 4 -->
-  <div class="sensor-card s4">
-    <div class="card-header">
-      <div class="card-title">// Sensor 4</div>
-      <div class="alert-badge" id="alert4"></div>
-    </div>
-    <div class="gauge-wrap">
-      <svg class="gauge-svg" viewBox="0 0 220 130">
-        <path id="g4-bg"  fill="none" stroke="#1a2332" stroke-width="14" stroke-linecap="round"/>
-        <path id="g4-neg" fill="none" stroke="#ff3860" stroke-width="14" stroke-linecap="round"/>
-        <path id="g4-pos" fill="none" stroke="#ce93d8" stroke-width="14" stroke-linecap="round"/>
-        <line id="g4-zero" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
-        <line id="g4-needle" x1="110" y1="110" x2="110" y2="44"
-          stroke="white" stroke-width="2" stroke-linecap="round"
-          style="transform-origin:110px 110px;transition:transform 0.4s cubic-bezier(.4,2,.6,1)"/>
-        <circle cx="110" cy="110" r="5" fill="white" opacity="0.7"/>
-        <text x="10"  y="124" fill="#ff3860" font-family="DM Mono,monospace" font-size="9">-20</text>
-        <text x="166" y="124" fill="#ce93d8" font-family="DM Mono,monospace" font-size="9">+200</text>
-        <text x="100" y="124" fill="#3d5166" font-family="DM Mono,monospace" font-size="9">0</text>
-      </svg>
-      <div class="gauge-nums">
-        <div class="gnum">
-          <div class="val" id="s4-inwc">--.-</div>
-          <div class="unit">inWC</div>
-        </div>
-        <div class="gnum">
-          <div class="val" id="s4-mbar" style="color:var(--dim)">--.-</div>
-          <div class="unit">mbar</div>
-        </div>
-      </div>
-    </div>
-    <div class="chart-wrap">
-      <div class="chart-title">// historial</div>
-      <canvas class="chart" id="chart4"></canvas>
-    </div>
-  </div>
-
-  <!-- DATALOGGER -->
   <div class="log-panel">
     <div class="log-header">
-      <div class="log-title">// Datalogger virtual</div>
-      <div class="log-controls">
-        <span class="log-count" id="log-count">0 registros</span>
-        <span class="log-interval" id="log-interval-lbl"></span>
-        <button class="btn-log active" id="btn-log-toggle">● Grabando</button>
-        <button class="btn-log export" id="btn-export">↓ Exportar CSV</button>
-        <button class="btn-log clear" id="btn-clear">✕ Limpiar</button>
+      <div class="card-title">// DATALOGGER VIRTUAL</div>
+      <div class="header-right">
+        <button class="btn-log active" id="btn-log-toggle">● GRABANDO</button>
+        <button class="btn-log" id="btn-export">EXPORTAR CSV</button>
       </div>
     </div>
     <div class="log-table-wrap">
@@ -375,318 +159,89 @@ canvas.chart { width:100%; height:90px; display:block; }
         <thead>
           <tr>
             <th>Hora</th>
-            <th class="s1c">S1 inWC</th>
-            <th class="s1c">S1 mbar</th>
-            <th class="s2c">S2 inWC</th>
-            <th class="s2c">S2 mbar</th>
-            <th class="s3c">S3 inWC</th>
-            <th class="s3c">S3 mbar</th>
-            <th class="s4c">S4 inWC</th>
-            <th class="s4c">S4 mbar</th>
+            <th>S1 (inWC)</th>
+            <th>S2 (inWC)</th>
+            <th>S3 (inWC)</th>
+            <th>S4 (inWC)</th>
           </tr>
         </thead>
-        <tbody id="log-tbody">
-          <tr><td colspan="9" class="log-empty">Sin datos — activa BLE en el dispositivo y conecta para comenzar</td></tr>
-        </tbody>
+        <tbody id="log-tbody"></tbody>
       </table>
     </div>
   </div>
-
 </main>
 
-<div id="no-ble">
-  <h2>⚠ SIN SOPORTE BLE</h2>
-  <p>Usa Chrome o Edge en Android o PC.<br>Web Bluetooth no funciona en Safari ni Firefox.<br>Asegúrate de estar en HTTPS o localhost.</p>
-</div>
-
 <script>
-// =============================================
-// BLE UUIDs — deben coincidir con el .ino
-// =============================================
-const SVC   = '12345678-1234-1234-1234-123456789abc';
-const C_S1  = '12345678-1234-1234-1234-123456789ab1';
-const C_S2  = '12345678-1234-1234-1234-123456789ab2';
-const C_S3  = '12345678-1234-1234-1234-123456789ab3';
-const C_S4  = '12345678-1234-1234-1234-123456789ab4';
+const SVC = '12345678-1234-1234-1234-123456789abc';
+const CHARS = [
+  '12345678-1234-1234-1234-123456789ab1',
+  '12345678-1234-1234-1234-123456789ab2',
+  '12345678-1234-1234-1234-123456789ab3',
+  '12345678-1234-1234-1234-123456789ab4'
+];
 
 const P_MIN = -20, P_MAX = 200;
-const MAX_PTS = 60;
+let lastS = [0, 0, 0, 0];
+let logData = [];
+let grabando = true;
 
-// =============================================
-// GAUGE SETUP
-// =============================================
-const CX=110, CY=110, R=80;
-
-function toXY(deg) {
-  const a = deg * Math.PI / 180;
-  return { x: CX + R * Math.cos(a), y: CY - R * Math.sin(a) };
-}
-function arc(a1, a2) {
-  if (Math.abs(a2 - a1) < 0.1) return '';
-  const s = toXY(a1), e = toXY(a2);
-  const large = Math.abs(a2 - a1) > 180 ? 1 : 0;
-  const sweep = a2 > a1 ? 0 : 1;
-  return `M${s.x} ${s.y} A${R} ${R} 0 ${large} ${sweep} ${e.x} ${e.y}`;
-}
-
-function setupGauge(pfx) {
-  document.getElementById(`${pfx}-bg`).setAttribute('d', arc(180, 0));
-  const zeroDeg = 180 - ((-P_MIN) / (P_MAX - P_MIN)) * 180;
-  const inn = { x: CX + (R-10)*Math.cos(zeroDeg*Math.PI/180), y: CY - (R-10)*Math.sin(zeroDeg*Math.PI/180) };
-  const out = { x: CX + (R+10)*Math.cos(zeroDeg*Math.PI/180), y: CY - (R+10)*Math.sin(zeroDeg*Math.PI/180) };
-  const zm = document.getElementById(`${pfx}-zero`);
-  zm.setAttribute('x1', inn.x); zm.setAttribute('y1', inn.y);
-  zm.setAttribute('x2', out.x); zm.setAttribute('y2', out.y);
-  return zeroDeg;
-}
-
-function updateGauge(pfx, val, zeroDeg) {
+// Gauges
+function updateGauge(idx, val) {
+  const n = idx + 1;
   const clamped = Math.max(P_MIN, Math.min(P_MAX, val));
   const deg = 180 - ((clamped - P_MIN) / (P_MAX - P_MIN)) * 180;
-  document.getElementById(`${pfx}-needle`).style.transform = `rotate(${90 - deg}deg)`;
-  if (val < 0) {
-    document.getElementById(`${pfx}-neg`).setAttribute('d', arc(180, Math.max(deg, zeroDeg)));
-    document.getElementById(`${pfx}-pos`).setAttribute('d', '');
-  } else {
-    document.getElementById(`${pfx}-neg`).setAttribute('d', '');
-    document.getElementById(`${pfx}-pos`).setAttribute('d', val > 0 ? arc(zeroDeg, deg) : '');
-  }
-}
-
-const z1 = setupGauge('g1');
-const z2 = setupGauge('g2');
-const z3 = setupGauge('g3');
-const z4 = setupGauge('g4');
-
-// =============================================
-// ESTADO ACTUAL
-// =============================================
-let lastS = [0, 0, 0, 0];
-
-// =============================================
-// ACTUALIZAR SENSORES
-// =============================================
-const hists = [[], [], [], []];
-const COLORS = ['#00d4ff', '#ff6b2b', '#00e676', '#ce93d8'];
-const ZEROS  = [z1, z2, z3, z4];
-
-function updateSensor(idx, v) {
-  lastS[idx] = v;
-  const n = idx + 1;
-  const pfx = `g${n}`;
-  updateGauge(pfx, v, ZEROS[idx]);
-
-  const elInwc = document.getElementById(`s${n}-inwc`);
-  elInwc.textContent = v.toFixed(1);
-  elInwc.className = 'val' + (v < 0 ? ' neg' : '');
-  document.getElementById(`s${n}-mbar`).textContent = (v * 2.4908).toFixed(1);
-
-  const ab = document.getElementById(`alert${n}`);
-  if (v > P_MAX)      { ab.textContent = '>P.MAX';   ab.className = 'alert-badge show pmax'; }
-  else if (v < P_MIN) { ab.textContent = '>VAC.MAX'; ab.className = 'alert-badge show vmax'; }
-  else                { ab.className = 'alert-badge'; }
-
-  hists[idx].push(v);
-  if (hists[idx].length > MAX_PTS) hists[idx].shift();
-  drawChart(`chart${n}`, hists[idx], COLORS[idx]);
-  logRegistro();
-}
-
-// =============================================
-// CHART
-// =============================================
-function drawChart(id, data, color) {
-  const canvas = document.getElementById(id);
-  const dpr = window.devicePixelRatio || 1;
-  const W = canvas.offsetWidth, H = canvas.offsetHeight || 90;
-  canvas.width = W * dpr; canvas.height = H * dpr;
-  const ctx = canvas.getContext('2d');
-  ctx.scale(dpr, dpr);
-  ctx.clearRect(0, 0, W, H);
-
-  const P = { top:6, right:8, bottom:18, left:38 };
-  const gW = W - P.left - P.right, gH = H - P.top - P.bottom;
-
-  const steps = [-20, 0, 50, 100, 150, 200];
-  steps.forEach(sv => {
-    const y = P.top + gH - ((sv - P_MIN) / (P_MAX - P_MIN)) * gH;
-    if (y < P.top || y > P.top + gH) return;
-    ctx.strokeStyle = '#1a2332'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(P.left, y); ctx.lineTo(P.left + gW, y); ctx.stroke();
-    ctx.fillStyle = sv === 0 ? '#5a7080' : '#2a3a4a';
-    ctx.font = '9px DM Mono,monospace'; ctx.textAlign = 'right';
-    ctx.fillText(sv, P.left - 4, y + 3);
-  });
-
-  ctx.save();
-  ctx.translate(9, P.top + gH / 2);
-  ctx.rotate(-Math.PI / 2);
-  ctx.fillStyle = '#3d5166'; ctx.font = '8px DM Mono,monospace'; ctx.textAlign = 'center';
-  ctx.fillText('inWC', 0, 0);
-  ctx.restore();
-
-  const zy = P.top + gH - ((-P_MIN) / (P_MAX - P_MIN)) * gH;
-  ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.moveTo(P.left, zy); ctx.lineTo(P.left + gW, zy); ctx.stroke();
-
-  if (data.length < 2) return;
-
-  const grad = ctx.createLinearGradient(0, P.top, 0, P.top + gH);
-  grad.addColorStop(0, color + '44'); grad.addColorStop(1, color + '00');
-  ctx.beginPath();
-  data.forEach((v, i) => {
-    const x = P.left + (i / (MAX_PTS - 1)) * gW;
-    const y = P.top + gH - ((v - P_MIN) / (P_MAX - P_MIN)) * gH;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  });
-  const lx = P.left + ((data.length - 1) / (MAX_PTS - 1)) * gW;
-  ctx.lineTo(lx, zy); ctx.lineTo(P.left, zy);
-  ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
-
-  ctx.beginPath();
-  data.forEach((v, i) => {
-    const x = P.left + (i / (MAX_PTS - 1)) * gW;
-    const y = P.top + gH - ((v - P_MIN) / (P_MAX - P_MIN)) * gH;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  });
-  ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.lineJoin = 'round'; ctx.stroke();
-
-  const lv = data[data.length - 1];
-  const ly = P.top + gH - ((lv - P_MIN) / (P_MAX - P_MIN)) * gH;
-  ctx.beginPath(); ctx.arc(lx, ly, 3, 0, Math.PI * 2);
-  ctx.fillStyle = color; ctx.fill();
-}
-
-// =============================================
-// DATALOGGER
-// =============================================
-const logData = [];
-let grabando = true;
-let lastLogTime = 0;
-const LOG_INTERVAL = 2000;
-
-function horaActual() {
-  const d = new Date();
-  return d.toTimeString().slice(0, 8);
-}
-
-function logRegistro() {
-  if (!grabando) return;
-  const ahora = Date.now();
-  if (ahora - lastLogTime < LOG_INTERVAL) return;
-  lastLogTime = ahora;
-
-  const reg = {
-    hora:  horaActual(),
-    s1:    lastS[0].toFixed(2),  s1mb: (lastS[0] * 2.4908).toFixed(2),
-    s2:    lastS[1].toFixed(2),  s2mb: (lastS[1] * 2.4908).toFixed(2),
-    s3:    lastS[2].toFixed(2),  s3mb: (lastS[2] * 2.4908).toFixed(2),
-    s4:    lastS[3].toFixed(2),  s4mb: (lastS[3] * 2.4908).toFixed(2),
+  document.getElementById(`g${n}-needle`).style.transform = `rotate(${90 - deg}deg)`;
+  
+  const arcPath = (v) => {
+    const angle = 180 - ((v - P_MIN) / (P_MAX - P_MIN)) * 180;
+    const rad = angle * Math.PI / 180;
+    const x = 110 + 80 * Math.cos(rad);
+    const y = 110 - 80 * Math.sin(rad);
+    return `M30 110 A80 80 0 0 1 ${x} ${y}`;
   };
+  document.getElementById(`g${n}-pos`).setAttribute('d', arcPath(clamped));
+  document.getElementById(`s${n}-inwc`).textContent = val.toFixed(1);
+}
+
+// Inicializar fondos de gauges
+for(let i=1; i<=4; i++) {
+  document.getElementById(`g${i}-bg`).setAttribute('d', `M30 110 A80 80 0 0 1 190 110`);
+}
+
+async function conectar() {
+  try {
+    const device = await navigator.bluetooth.requestDevice({ filters: [{ services: [SVC] }] });
+    const server = await device.gatt.connect();
+    const service = await server.getPrimaryService(SVC);
+    
+    for (let i = 0; i < 4; i++) {
+      const char = await service.getCharacteristic(CHARS[i]);
+      await char.startNotifications();
+      char.addEventListener('characteristicvaluechanged', e => {
+        const val = e.target.value.getFloat32(0, true);
+        lastS[i] = val;
+        updateGauge(i, val);
+      });
+    }
+    document.getElementById('btn-ble').textContent = "CONECTADO";
+  } catch(e) { console.error(e); }
+}
+
+// Datalogger simple
+setInterval(() => {
+  if(!grabando || lastS.every(v => v === 0)) return;
+  const now = new Date().toLocaleTimeString();
+  const reg = { hora: now, s1: lastS[0], s2: lastS[1], s3: lastS[2], s4: lastS[3] };
   logData.push(reg);
-  actualizarTabla(reg);
-  document.getElementById('log-count').textContent = logData.length + ' registros';
-}
-
-function actualizarTabla(reg) {
-  const tbody = document.getElementById('log-tbody');
-  if (logData.length === 1) tbody.innerHTML = '';
   const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${reg.hora}</td>
-    <td>${reg.s1}</td><td>${reg.s1mb}</td>
-    <td>${reg.s2}</td><td>${reg.s2mb}</td>
-    <td>${reg.s3}</td><td>${reg.s3mb}</td>
-    <td>${reg.s4}</td><td>${reg.s4mb}</td>
-  `;
-  tbody.appendChild(tr);
-  const wrap = document.querySelector('.log-table-wrap');
-  wrap.scrollTop = wrap.scrollHeight;
-}
+  tr.innerHTML = `<td>${now}</td><td>${reg.s1.toFixed(2)}</td><td>${reg.s2.toFixed(2)}</td><td>${reg.s3.toFixed(2)}</td><td>${reg.s4.toFixed(2)}</td>`;
+  document.getElementById('log-tbody').appendChild(tr);
+}, 2000);
 
+document.getElementById('btn-ble').addEventListener('click', conectar);
 document.getElementById('btn-log-toggle').addEventListener('click', () => {
   grabando = !grabando;
-  const btn = document.getElementById('btn-log-toggle');
-  btn.textContent = grabando ? '● Grabando' : '○ Pausado';
-  btn.className = grabando ? 'btn-log active' : 'btn-log';
-});
-
-document.getElementById('btn-export').addEventListener('click', () => {
-  if (logData.length === 0) { alert('Sin datos para exportar'); return; }
-  const header = 'Hora,S1 inWC,S1 mbar,S2 inWC,S2 mbar,S3 inWC,S3 mbar,S4 inWC,S4 mbar\n';
-  const rows = logData.map(r =>
-    `${r.hora},${r.s1},${r.s1mb},${r.s2},${r.s2mb},${r.s3},${r.s3mb},${r.s4},${r.s4mb}`
-  ).join('\n');
-  const blob = new Blob([header + rows], { type: 'text/csv' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url;
-  a.download = `eskids_presion_x4_${new Date().toISOString().slice(0, 10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-document.getElementById('btn-clear').addEventListener('click', () => {
-  if (!confirm('¿Limpiar todos los registros del datalogger virtual?')) return;
-  logData.length = 0;
-  document.getElementById('log-tbody').innerHTML =
-    '<tr><td colspan="9" class="log-empty">Sin datos — conecta el sensor para comenzar a grabar</td></tr>';
-  document.getElementById('log-count').textContent = '0 registros';
-});
-
-// =============================================
-// BLE
-// =============================================
-let device = null;
-
-function setStatus(s, name) {
-  document.getElementById('dot').className = 'dot' + (s === 'on' ? ' on' : s === 'mid' ? ' mid' : '');
-  document.getElementById('ble-lbl').textContent = s === 'on' ? 'CONECTADO' : s === 'mid' ? 'CONECTANDO...' : 'DESCONECTADO';
-  const btn = document.getElementById('btn-ble');
-  btn.textContent = s === 'on' ? 'Desconectar' : 'Conectar';
-  btn.disabled = s === 'mid';
-  const dn = document.getElementById('device-name');
-  if (s === 'on' && name) { dn.textContent = name; dn.classList.add('show'); }
-  else { dn.textContent = ''; dn.classList.remove('show'); }
-}
-
-document.getElementById('btn-ble').addEventListener('click', async () => {
-  if (device && device.gatt.connected) { device.gatt.disconnect(); return; }
-  try {
-    setStatus('mid');
-    device = await navigator.bluetooth.requestDevice({ filters: [{ services: [SVC] }] });
-    device.addEventListener('gattserverdisconnected', () => setStatus('off'));
-    const server  = await device.gatt.connect();
-    const service = await server.getPrimaryService(SVC);
-
-    const cS1 = await service.getCharacteristic(C_S1);
-    await cS1.startNotifications();
-    cS1.addEventListener('characteristicvaluechanged', e => updateSensor(0, e.target.value.getFloat32(0, true)));
-
-    const cS2 = await service.getCharacteristic(C_S2);
-    await cS2.startNotifications();
-    cS2.addEventListener('characteristicvaluechanged', e => updateSensor(1, e.target.value.getFloat32(0, true)));
-
-    const cS3 = await service.getCharacteristic(C_S3);
-    await cS3.startNotifications();
-    cS3.addEventListener('characteristicvaluechanged', e => updateSensor(2, e.target.value.getFloat32(0, true)));
-
-    const cS4 = await service.getCharacteristic(C_S4);
-    await cS4.startNotifications();
-    cS4.addEventListener('characteristicvaluechanged', e => updateSensor(3, e.target.value.getFloat32(0, true)));
-
-    setStatus('on', device.name);
-  } catch(e) {
-    console.warn(e); setStatus('off');
-  }
-});
-
-if (!navigator.bluetooth) document.getElementById('no-ble').style.display = 'flex';
-
-// Init visual
-[0,1,2,3].forEach(i => updateSensor(i, 0));
-window.addEventListener('resize', () => {
-  [0,1,2,3].forEach(i => drawChart(`chart${i+1}`, hists[i], COLORS[i]));
+  document.getElementById('btn-log-toggle').textContent = grabando ? "● GRABANDO" : "○ PAUSADO";
 });
 </script>
 </body>
