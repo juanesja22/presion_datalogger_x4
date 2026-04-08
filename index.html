@@ -108,11 +108,11 @@ main {
 .alert-badge.vmax { background:rgba(255,214,0,0.1); color:var(--warn); border:1px solid var(--warn); }
 .alert-badge.falla { background:rgba(255,56,96,0.15); color:var(--neg); border:1px solid var(--neg); }
 
-/* GAUGE ALINEADO A LA IZQUIERDA */
-.gauge-wrap { display:flex; flex-direction:column; align-items: flex-start; gap:8px; }
-.gauge-svg { width:100%; max-width:210px; margin-left: -15px; }
-.gauge-nums { display:flex; gap:20px; justify-content: flex-start; }
-.gnum { text-align: left; }
+/* GAUGE CENTRADO */
+.gauge-wrap { display:flex; flex-direction:column; align-items: center; gap:8px; }
+.gauge-svg { width:100%; max-width:210px; margin-left: 0; }
+.gauge-nums { display:flex; gap:24px; justify-content: center; width: 100%; }
+.gnum { text-align: center; }
 .gnum .val { font-family:'Orbitron',monospace; font-size:20px; font-weight:700; color:var(--accent); line-height:1; transition:color 0.3s; }
 .gnum .val.neg { color:var(--neg); }
 .gnum .val.falla { color:var(--neg); font-size:13px; }
