@@ -154,6 +154,7 @@ canvas.chart { width:100%; height:90px; display:block; }
 .btn-log.export:hover { background:var(--s1); color:var(--bg); }
 .btn-log.clear { border-color:var(--neg); color:var(--neg); }
 .btn-log.clear:hover { background:var(--neg); color:var(--bg); }
+.btn-log:disabled { opacity:0.3; cursor:not-allowed; }
 .log-table-wrap { max-height:200px; overflow-y:auto; }
 .log-table {
   width:100%; border-collapse:collapse;
@@ -173,6 +174,46 @@ canvas.chart { width:100%; height:90px; display:block; }
 .log-table tr:last-child td { border-bottom:none; }
 .log-empty { text-align:center; color:var(--dim); font-size:11px; padding:24px; }
 
+/* ===== CONFIG INTERVALO ESP32 ===== */
+.cfg-sep {
+  border:none; border-top:1px solid var(--border);
+  margin:18px 0 14px;
+}
+.cfg-block { display:flex; flex-direction:column; gap:10px; }
+.cfg-row {
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+}
+.cfg-label {
+  font-size:11px; color:var(--dim); letter-spacing:1px;
+  min-width:180px;
+}
+.cfg-current {
+  font-family:'Orbitron',monospace; font-size:14px; font-weight:700;
+  color:var(--s3); letter-spacing:2px;
+}
+.cfg-input {
+  background:var(--bg); border:1px solid var(--border); color:var(--text);
+  padding:6px 10px; font-family:'DM Mono',monospace; font-size:12px;
+  width:80px; border-radius:4px; outline:none;
+  transition:border-color 0.2s;
+}
+.cfg-input:focus { border-color:var(--s1); }
+.cfg-input:disabled { opacity:0.3; cursor:not-allowed; }
+.cfg-unit { font-size:11px; color:var(--dim); }
+.btn-cfg {
+  border-color:var(--s1); color:var(--s1);
+}
+.btn-cfg:hover:not(:disabled) { background:var(--s1); color:var(--bg); }
+.cfg-status { font-size:11px; letter-spacing:1px; min-width:120px; }
+.cfg-status.ok  { color:var(--s3); }
+.cfg-status.err { color:var(--neg); }
+.cfg-status.warn { color:var(--warn); }
+.cfg-hint {
+  font-size:10px; color:var(--dim); letter-spacing:0.5px; line-height:1.6;
+  padding:8px 12px; border-left:2px solid var(--border);
+  margin-top:2px;
+}
+
 /* NO BLE */
 #no-ble {
   position:fixed; inset:0; z-index:100;
@@ -191,6 +232,7 @@ canvas.chart { width:100%; height:90px; display:block; }
 @media(max-width:640px) {
   main { grid-template-columns:1fr; }
   .log-panel { grid-column:1; }
+  .cfg-label { min-width:unset; width:100%; }
 }
 </style>
 </head>
@@ -355,6 +397,38 @@ canvas.chart { width:100%; height:90px; display:block; }
   </div>
 
   <div class="log-panel">
+
+    <!-- ===== PANEL CONFIG INTERVALO SD ===== -->
+    <div class="cfg-block">
+      <div class="log-title">// Config intervalo SD · Datalogger</div>
+
+      <!-- Fila: intervalo actual leído desde la ESP32 -->
+      <div class="cfg-row" style="margin-top:6px;">
+        <span class="cfg-label">Intervalo actual en ESP32:</span>
+        <span class="cfg-current" id="cfg-current">--</span>
+        <span class="cfg-unit">seg</span>
+      </div>
+
+      <!-- Fila: nuevo intervalo + botón guardar -->
+      <div class="cfg-row">
+        <span class="cfg-label">Nuevo intervalo:</span>
+        <input type="number" id="cfg-seg" class="cfg-input"
+               min="1" max="3600" value="10" disabled>
+        <span class="cfg-unit">seg &nbsp;(1 – 3600)</span>
+        <button class="btn-log btn-cfg" id="btn-cfg-send" disabled>
+          💾 Guardar en ESP32
+        </button>
+        <span class="cfg-status" id="cfg-status"></span>
+      </div>
+
+      <!-- Nota informativa -->
+      <p class="cfg-hint">
+        El valor se guarda en la memoria flash interna (NVS) de la ESP32 y sobrevive cortes de energía.<br>
+        Para forzar el valor desde el IDE, sube el número de <code>NVS_CONFIG_VER</code> en el .ino antes de grabar.
+      </p>
+    </div>
+
+    <hr class="cfg-sep">
     <div class="log-header">
       <div class="log-title">// Datalogger virtual</div>
       <div class="log-controls">
@@ -381,6 +455,7 @@ canvas.chart { width:100%; height:90px; display:block; }
         </tbody>
       </table>
     </div>
+
   </div>
 
 </main>
@@ -399,9 +474,10 @@ const C_S1  = '12345678-1234-1234-1234-123456789ab1';
 const C_S2  = '12345678-1234-1234-1234-123456789ab2';
 const C_S3  = '12345678-1234-1234-1234-123456789ab3';
 const C_S4  = '12345678-1234-1234-1234-123456789ab4';
+const C_CFG = '12345678-1234-1234-1234-123456789ab5';  // ← intervalo SD
 
 const P_MIN = -20, P_MAX = 200;
-const MAX_PTS = 40; // CURVA MÁS CORTA
+const MAX_PTS = 40;
 
 // =============================================
 // GAUGE SETUP
@@ -626,6 +702,54 @@ document.getElementById('btn-clear').addEventListener('click', () => {
 });
 
 // =============================================
+// CONFIG INTERVALO — helpers
+// =============================================
+let charCFG_ble = null;
+
+function setCfgStatus(msg, tipo) {
+  const el = document.getElementById('cfg-status');
+  el.textContent = msg;
+  el.className = 'cfg-status ' + (tipo || '');
+  if (tipo === 'ok') {
+    setTimeout(() => { el.textContent = ''; el.className = 'cfg-status'; }, 3000);
+  }
+}
+
+function mostrarIntervaloEsp(ms) {
+  const seg = ms / 1000;
+  document.getElementById('cfg-current').textContent = seg % 1 === 0 ? seg : seg.toFixed(1);
+  document.getElementById('cfg-seg').value = Math.round(seg);
+}
+
+function habilitarCfg(habilitado) {
+  document.getElementById('cfg-seg').disabled    = !habilitado;
+  document.getElementById('btn-cfg-send').disabled = !habilitado;
+  if (!habilitado) {
+    document.getElementById('cfg-current').textContent = '--';
+    setCfgStatus('', '');
+  }
+}
+
+document.getElementById('btn-cfg-send').addEventListener('click', async () => {
+  if (!charCFG_ble) { setCfgStatus('Sin conexión BLE', 'err'); return; }
+  const seg = parseInt(document.getElementById('cfg-seg').value);
+  if (isNaN(seg) || seg < 1 || seg > 3600) {
+    setCfgStatus('⚠ Rango: 1 – 3600 seg', 'warn'); return;
+  }
+  const ms = seg * 1000;
+  const buf = new ArrayBuffer(4);
+  new DataView(buf).setUint32(0, ms, true);   // uint32 little-endian, igual que el .ino
+  try {
+    await charCFG_ble.writeValue(buf);
+    mostrarIntervaloEsp(ms);
+    setCfgStatus('✅ Guardado en ESP32', 'ok');
+  } catch(e) {
+    console.error('Error BLE write CFG:', e);
+    setCfgStatus('❌ Error al escribir', 'err');
+  }
+});
+
+// =============================================
 // BLE
 // =============================================
 let device = null;
@@ -639,6 +763,12 @@ function setStatus(s, name) {
   const dn = document.getElementById('device-name');
   if (s === 'on' && name) { dn.textContent = name; dn.classList.add('show'); }
   else { dn.textContent = ''; dn.classList.remove('show'); }
+
+  // Habilitar/deshabilitar panel de config al conectar/desconectar
+  if (s !== 'on') {
+    charCFG_ble = null;
+    habilitarCfg(false);
+  }
 }
 
 document.getElementById('btn-ble').addEventListener('click', async () => {
@@ -650,6 +780,7 @@ document.getElementById('btn-ble').addEventListener('click', async () => {
     const server  = await device.gatt.connect();
     const service = await server.getPrimaryService(SVC);
 
+    // Sensores (NOTIFY)
     const cS1 = await service.getCharacteristic(C_S1);
     await cS1.startNotifications();
     cS1.addEventListener('characteristicvaluechanged', e => updateSensor(0, e.target.value.getFloat32(0, true)));
@@ -665,6 +796,19 @@ document.getElementById('btn-ble').addEventListener('click', async () => {
     const cS4 = await service.getCharacteristic(C_S4);
     await cS4.startNotifications();
     cS4.addEventListener('characteristicvaluechanged', e => updateSensor(3, e.target.value.getFloat32(0, true)));
+
+    // Config intervalo (READ + WRITE)
+    try {
+      charCFG_ble = await service.getCharacteristic(C_CFG);
+      const val = await charCFG_ble.readValue();
+      const ms  = val.getUint32(0, true);
+      mostrarIntervaloEsp(ms);
+      habilitarCfg(true);
+    } catch(eCfg) {
+      console.warn('Característica CFG no disponible (firmware antiguo?):', eCfg);
+      habilitarCfg(false);
+      setCfgStatus('CFG no disponible en este firmware', 'warn');
+    }
 
     setStatus('on', device.name);
   } catch(e) {
